@@ -1,0 +1,47 @@
+// SENTINEL 2 2017-2022
+// Define the region of interest (Newark, NJ)
+var roi = ee.Geometry.Point(-74.1724, 40.7357).buffer(7500); // Adjust the buffer size as needed
+
+// Filter Sentinel-2 imagery
+var sentinel2 = ee.ImageCollection('COPERNICUS/S2')
+  .filterBounds(roi)
+  .filterDate('2017-01-01', '2022-12-31')
+  .filterMetadata('CLOUDY_PIXEL_PERCENTAGE', 'less_than', 5)
+  .select(['B.*']);
+
+// Function to export images
+var exportImage = function(image) {
+  var imageId = image.get('system:index').getInfo();
+  var date = ee.Date(image.get('system:time_start')).format("yyyy-MM-dd").getInfo();
+  var exportName = 'Sentinel2_' + date;
+  
+  // Export image
+  Export.image.toDrive({
+    'image': image,
+    'description': exportName,
+    'folder': 'Sentinel2_Newark', // Adjust the folder name as needed
+    'fileNamePrefix': exportName,
+    'scale': 10, // Adjust the scale (resolution) as needed
+    'region': roi,
+    'maxPixels': 1e13
+  });
+};
+
+// Convert the filtered collection to a List
+var imageList = sentinel2.toList(sentinel2.size());
+
+// Get the number of images
+var imageCount = imageList.size().getInfo();
+print('Number of images:', imageCount);
+
+// Iterate over the image List and conditionally export images
+for (var i = 0; i < imageCount; i++) {
+  var image = ee.Image(imageList.get(i));
+  var cloudCover = image.get('CLOUDY_PIXEL_PERCENTAGE').getInfo();
+  print('Cloud cover:', cloudCover);
+  
+  // Export only if cloud cover is below 5%
+  if (cloudCover < 5) {
+    exportImage(image);
+  }
+}
