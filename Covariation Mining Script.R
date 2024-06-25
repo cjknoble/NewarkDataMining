@@ -4,14 +4,12 @@
 
 ## LOAD PACKAGES 
 
-# library(dplyr)
-# library(stats)
-# library(zoo)
+library(stats)
 library(GreyModel)
 
 ## IMPORT STANDARDIZED MASTER DATASET
 alldata <- read.csv(
-  file = ".../MASTER SD Data (Standardized) 05.14.24 (Downloaded from Drive and Edited).csv", 
+  file = "C:/...Data.csv", 
   row.names = "Years")
 
 ## CREATE ALL CUSTOM FUNCTIONS FOR COVARIATION MINING
@@ -1358,7 +1356,7 @@ mined_relationships <- rbind(mined_relationships, output_data)
 ####### EXPORT RESULTING RELATIONSHIPS ######
 
 # After Running Whole Script, Export mined_relationships
-#write.csv(mined_relationships, file = ".../MinedRelationships_Standardized_FINAL_16May2024.csv")
+write.csv(mined_relationships, file = "C:/...Final.csv")
 
 ###################################################################################
 ### TESTED AND REMOVED PRESERVED BELOW ###
