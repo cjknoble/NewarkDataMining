@@ -116,7 +116,7 @@ calc_indexes <- function(sim_results, baseline_results) {
 ### GET BASELINE DATA SET
 
 # Set the path for the dynamic datasheet which contains the simulation's current results
-data_file_path <- "C:/Users/cjkno/Documents/My Documents/Classes - '23 Spring/Research/Paper #4 - Policy and Governance/SIMULATIONS/Stella Results (Dynamic).xlsx"
+data_file_path <- ".../SIMULATIONS/Stella Results (Dynamic).xlsx"
 
 # Import Baseline Simulation results (be sure to first run the baseline simulation first)
 #BASELINE <- pull_sim(data_file_path)
@@ -583,64 +583,6 @@ Indexes <- rbind(Indexes, sim_index)
 #HOUSING1959_none_85_SIGDIG <- pull_sim(data_file_path)
 sim_index <- calc_indexes(HOUSING1959_none_85_SIGDIG, BASELINE_SIGDIGITS) # 0.985
 Indexes <- rbind(Indexes, sim_index)
-
-
-
-
-
-
-
-
-
-################################################################################
-### SCRATCH 
-
-# Convert data frames to matrixes
-mtx <- as.matrix(UNINSURED[,-1])
-mtx_baseline <- as.matrix(BASELINE[,-1])
-
-# Calculate the difference between the simulation and baseline values 
-mtx_diff <- mtx - mtx_baseline
-
-# Save as a data frame
-df <- as.data.frame(mtx_diff)
-
-# Calculate the relevant indexes
-df$Index_SocJustice <- (
-  df$`Residents BIPOC (%)`+ 
-    -1 * (
-      df$`Below High School Education (%)` + 
-        df$`Below Poverty (%)` + 
-        df$`Uninsured (%)` + 
-        df$`Mean Housing Affordability (% of Income Spent on Housing)` + 
-        df$`Unemployment Rate (%)`) 
-)
-
-df$Index_Hazard <- -1 * (
-  df$`% of Housing Units Built 1959 or Earlier` + 
-    df$AQI + 
-    df$`Polluting Facilities Release: Other Contamination (lbs)` + 
-    df$`Polluting Facilities Release: Pb Release (Air Only) (lbs)` + 
-    df$`Traffic (VMT)`
-)
-
-# Plot the index values over time
-scatter.smooth(df$`Rate or % of People with Above Safe Levels of Pb[Adults]`)
-scatter.smooth(df$`Rate or % of People with Above Safe Levels of Pb[Children 10]`)
-scatter.smooth(df$Index_SocJustice) 
-scatter.smooth(df$Index_Hazard)
-
-# Save the results to the Indexes data frame
-Indexes <- rbind(Indexes, data.frame(
-  Variable = sim_name,
-  EBLL_Adults = df$`Rate or % of People with Above Safe Levels of Pb[Adults]`[11],
-  EBLL_Children = df$`Rate or % of People with Above Safe Levels of Pb[Children 10]`[11],
-  SocialJustice = df$Index_SocJustice[11],
-  Hazard = df$Index_Hazard[11]
-), 
-stringsAsFactors = FALSE)
-
-print(Indexes[nrow(Indexes),])
 
 
 
